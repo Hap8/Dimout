@@ -5,6 +5,7 @@ public abstract class EntityState
     protected Player player;
     protected StateMachine stateMachine;
     protected string stateName;
+    protected float stateTimer;
 
     protected Rigidbody2D rb;
     protected PlayerInputSet input;
@@ -26,7 +27,10 @@ public abstract class EntityState
 
     public virtual void Update()
     {
-
+        if(player.dashReady && !player.isDashing && input.Player.Dash.WasPressedThisFrame())
+        {
+            stateMachine.ChangeState(player.dashState);
+        }
     }
 
     public virtual void Exit() 

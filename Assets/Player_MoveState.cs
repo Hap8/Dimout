@@ -7,6 +7,11 @@ public class Player_MoveState : Player_GroundedState
 
     }
 
+    public override void Enter()
+    {
+        base.Enter();
+    }
+
     public override void Update()
     {
         base.Update();
@@ -16,6 +21,9 @@ public class Player_MoveState : Player_GroundedState
             stateMachine.ChangeState(player.idleState);
         }
 
-        player.SetVelocity(player.movementInput.x * player.moveSpeed, rb.linearVelocityY);
+        if(!player.isDashing)
+        {
+            player.SetVelocity(player.movementInput.x * player.moveSpeed, rb.linearVelocityY);
+        }
     }
 }

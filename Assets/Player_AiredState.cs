@@ -10,7 +10,12 @@ public class Player_AiredState : EntityState
     {
         base.Update();
 
-        if(player.movementInput.x != 0)
+        if (player.doubleJumpReady && input.Player.Jump.WasPressedThisFrame())
+        {
+            stateMachine.ChangeState(player.doubleJumpState);
+        }
+
+        if (player.movementInput.x != 0 && !player.isDashing)
         {
             player.SetVelocity(player.movementInput.x * player.moveSpeed * player.inAirMoveMultiplier, rb.linearVelocityY);
         }

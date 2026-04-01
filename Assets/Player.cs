@@ -11,14 +11,22 @@ public class Player : MonoBehaviour
     public Player_MoveState moveState { get; private set; }
     public Player_JumpState jumpState { get; private set; }
     public Player_FallState fallState { get; private set; }
+    public Player_DoubleJumpState doubleJumpState { get; private set; }
+    public Player_DashState dashState { get; private set; }
 
 
     [Header("Movement Details")]
     public float moveSpeed;
     public float jumpForce;
+    public float doubleJumpForce;
     public float inAirMoveMultiplier;
+    public float dashForce;
+    public float dashDuration;
 
-    private bool facingRight = true;
+    public bool doubleJumpReady = true;
+    public bool dashReady = true;
+    public bool isDashing = false;
+    public int facingDir = 1;
     public Vector2 movementInput { get; private set; }
 
     [Header("Collision Details")]
@@ -38,6 +46,8 @@ public class Player : MonoBehaviour
         moveState = new Player_MoveState(this, stateMachine, "move");
         jumpState = new Player_JumpState(this, stateMachine, "jump");
         fallState = new Player_FallState(this, stateMachine, "fall");
+        doubleJumpState = new Player_DoubleJumpState(this, stateMachine, "doubleJump");
+        dashState = new Player_DashState(this, stateMachine, "dash");
     }
 
     private void OnEnable()
@@ -57,6 +67,7 @@ public class Player : MonoBehaviour
     {
         HandleCollisionDetection();
         stateMachine.UpdateActiveState();
+        HandleFlip(movementInput.x);
     }
 
     public void SetVelocity(float xVelocity, float yVelocity)
@@ -66,11 +77,11 @@ public class Player : MonoBehaviour
 
     private void HandleFlip(float xVelocity)
     {
-        if(xVelocity > 0 && !facingRight)
+        if(xVelocity > 0 && facingDir == -1)
         {
             Flip();
         }
-        else if(xVelocity < 0 && facingRight)
+        else if(xVelocity < 0 && facingDir == 1)
         {
             Flip();
         }
@@ -78,7 +89,7 @@ public class Player : MonoBehaviour
 
     private void Flip()
     {
-        facingRight = !facingRight;
+        facingDir *= -1;
         transform.Rotate(0.0f, 180.0f, 0.0f);
     }
 

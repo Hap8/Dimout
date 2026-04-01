@@ -6,6 +6,14 @@ public class Player_GroundedState : EntityState
     {
     }
 
+    public override void Enter()
+    {
+        base.Enter();
+
+        player.dashReady = true;
+        player.doubleJumpReady = true;
+    }
+
     public override void Update()
     {
         base.Update();
