@@ -10,6 +10,8 @@ public class PlayerAttackRange : MonoBehaviour
     [Header("Detection")]
     [SerializeField] private LayerMask enemyLayer;
 
+    private Vector2 attackDirection = Vector2.right;
+
     private void Awake()
     {
         player = GetComponentInParent<Player>();
@@ -19,8 +21,8 @@ public class PlayerAttackRange : MonoBehaviour
     {
         if (((1 << collision.gameObject.layer) & enemyLayer) != 0)
         {
-            Vector2 dir = (player.transform.position - collision.transform.position).normalized;
-            player.rb.linearVelocity = new Vector2(dir.x * knockbackForce, dir.y * knockbackForce);
+            Vector2 knockbackDirection = -attackDirection.normalized;
+            player.rb.linearVelocity = knockbackDirection * knockbackForce;
         }
     }
 
@@ -28,16 +30,18 @@ public class PlayerAttackRange : MonoBehaviour
     {
         Vector2 input = player.movementInput;
 
-        if (Mathf.Abs(input.y) > 0.1f)
+        if (input.sqrMagnitude < 0.01f)
         {
-            transform.localPosition = new Vector3(0f, 0.7f * Mathf.Sign(input.y), 0f);
-            transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+            attackDirection = Vector2.right;
         }
         else
         {
-            transform.localPosition = new Vector3(0.5f, 0f, 0f);
-            transform.localRotation = Quaternion.identity;
+            attackDirection = player.transform.InverseTransformDirection(input).normalized;
         }
-    }
 
+        transform.localPosition = attackDirection * 0.7f;
+
+        float angle = Mathf.Atan2(attackDirection.y, attackDirection.x) * Mathf.Rad2Deg;
+        transform.localRotation = Quaternion.Euler(0f, 0f, angle);
+    }
 }
