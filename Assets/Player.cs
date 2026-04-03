@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     public Player_FallState fallState { get; private set; }
     public Player_DoubleJumpState doubleJumpState { get; private set; }
     public Player_DashState dashState { get; private set; }
+    public Player_AttackState attackState { get; private set; }
 
 
     [Header("Movement Details")]
@@ -26,6 +27,7 @@ public class Player : MonoBehaviour
     public bool doubleJumpReady = true;
     public bool dashReady = true;
     public bool isDashing = false;
+    public bool isAttacking = false;
     public int facingDir = 1;
     public Vector2 movementInput { get; private set; }
 
@@ -33,6 +35,11 @@ public class Player : MonoBehaviour
     [SerializeField] private float groundCheckDistance;
     [SerializeField] private LayerMask groundLayer;
     public bool groundDetected { get; private set; }
+
+    [Header("Attack")]
+    public float attackDuration = 0.2f;
+    [SerializeField] private PlayerAttackRange attackRange;
+    public PlayerAttackRange AttackRange => attackRange;
 
 
     private void Awake()
@@ -48,6 +55,7 @@ public class Player : MonoBehaviour
         fallState = new Player_FallState(this, stateMachine, "fall");
         doubleJumpState = new Player_DoubleJumpState(this, stateMachine, "doubleJump");
         dashState = new Player_DashState(this, stateMachine, "dash");
+        attackState = new Player_AttackState(this, stateMachine, "attack");
     }
 
     private void OnEnable()

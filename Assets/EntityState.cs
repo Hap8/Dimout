@@ -31,6 +31,11 @@ public abstract class EntityState
         {
             stateMachine.ChangeState(player.dashState);
         }
+
+        if(input.Player.Attack.WasPressedThisFrame())
+        {
+            stateMachine.ChangeState(player.attackState);
+        }
     }
 
     public virtual void Exit() 
