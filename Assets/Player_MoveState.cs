@@ -21,7 +21,7 @@ public class Player_MoveState : Player_GroundedState
             stateMachine.ChangeState(player.idleState);
         }
 
-        if(!player.isDashing)
+        if(!player.isDashing && !player.isAttacking)
         {
             player.SetVelocity(player.movementInput.x * player.moveSpeed, rb.linearVelocityY);
         }

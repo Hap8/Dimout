@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     public Player_DoubleJumpState doubleJumpState { get; private set; }
     public Player_DashState dashState { get; private set; }
     public Player_AttackState attackState { get; private set; }
+    public Player_WallSlideState wallSlideState { get; private set; }
 
 
     [Header("Movement Details")]
@@ -23,6 +24,7 @@ public class Player : MonoBehaviour
     public float inAirMoveMultiplier;
     public float dashForce;
     public float dashDuration;
+    public float wallSlideSpeedMultiplier;
 
     public bool doubleJumpReady = true;
     public bool dashReady = true;
@@ -33,8 +35,10 @@ public class Player : MonoBehaviour
 
     [Header("Collision Details")]
     [SerializeField] private float groundCheckDistance;
+    [SerializeField] private float wallCheckDistance;
     [SerializeField] private LayerMask groundLayer;
     public bool groundDetected { get; private set; }
+    public bool wallDetected { get; private set; }
 
     [Header("Attack")]
     public float attackDuration = 0.2f;
@@ -56,6 +60,7 @@ public class Player : MonoBehaviour
         doubleJumpState = new Player_DoubleJumpState(this, stateMachine, "doubleJump");
         dashState = new Player_DashState(this, stateMachine, "dash");
         attackState = new Player_AttackState(this, stateMachine, "attack");
+        wallSlideState = new Player_WallSlideState(this, stateMachine, "wallSlide");
     }
 
     private void OnEnable()
@@ -104,10 +109,12 @@ public class Player : MonoBehaviour
     private void HandleCollisionDetection()
     {
         groundDetected = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
+        wallDetected = Physics2D.Raycast(transform.position, Vector2.right * facingDir, wallCheckDistance, groundLayer);
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(transform.position, transform.position + new Vector3(0, -groundCheckDistance));
+        Gizmos.DrawLine(transform.position, transform.position + new Vector3(wallCheckDistance * facingDir, 0));
     }
 }

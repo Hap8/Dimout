@@ -36,6 +36,11 @@ public abstract class EntityState
         {
             stateMachine.ChangeState(player.attackState);
         }
+
+        if(!player.groundDetected && player.wallDetected && player.rb.linearVelocity.y < 0)
+        {
+            stateMachine.ChangeState(player.wallSlideState);
+        }
     }
 
     public virtual void Exit() 
