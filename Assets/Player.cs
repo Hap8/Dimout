@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     public Player_DoubleJumpState doubleJumpState { get; private set; }
     public Player_DashState dashState { get; private set; }
     public Player_AttackState attackState { get; private set; }
+    public Player_ParryState parryState { get; private set; }
     public Player_WallSlideState wallSlideState { get; private set; }
 
 
@@ -30,6 +31,8 @@ public class Player : MonoBehaviour
     public bool dashReady = true;
     public bool isDashing = false;
     public bool isAttacking = false;
+    public bool parryReady = true;
+    public bool isParrying = false;
     public int facingDir = 1;
     public Vector2 movementInput { get; private set; }
 
@@ -45,6 +48,13 @@ public class Player : MonoBehaviour
     [SerializeField] private PlayerAttackRange attackRange;
     public PlayerAttackRange AttackRange => attackRange;
 
+    [Header("Parry")]
+    public float parryDuration = 0.1f;
+    public float parryCooldown = 0.5f;
+    private float parryCooldownTimer;
+    [SerializeField] private PlayerParryRange parryRange;
+    public PlayerParryRange ParryRange => parryRange;
+
 
     private void Awake()
     {
@@ -53,6 +63,8 @@ public class Player : MonoBehaviour
         stateMachine = new StateMachine();
         input = new PlayerInputSet();
 
+        parryCooldownTimer = parryCooldown;
+
         idleState = new Player_IdleState(this, stateMachine, "idle");
         moveState = new Player_MoveState(this, stateMachine, "move");
         jumpState = new Player_JumpState(this, stateMachine, "jump");
@@ -60,6 +72,7 @@ public class Player : MonoBehaviour
         doubleJumpState = new Player_DoubleJumpState(this, stateMachine, "doubleJump");
         dashState = new Player_DashState(this, stateMachine, "dash");
         attackState = new Player_AttackState(this, stateMachine, "attack");
+        parryState = new Player_ParryState(this, stateMachine, "parry");
         wallSlideState = new Player_WallSlideState(this, stateMachine, "wallSlide");
     }
 
@@ -81,6 +94,7 @@ public class Player : MonoBehaviour
         HandleCollisionDetection();
         stateMachine.UpdateActiveState();
         HandleFlip(movementInput.x);
+        HandleParryCooldown();
     }
 
     public void SetVelocity(float xVelocity, float yVelocity)
@@ -117,4 +131,19 @@ public class Player : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + new Vector3(0, -groundCheckDistance));
         Gizmos.DrawLine(transform.position, transform.position + new Vector3(wallCheckDistance * facingDir, 0));
     }
+
+    private void HandleParryCooldown()
+    {
+        if (!parryReady)
+        {
+            parryCooldownTimer -= Time.deltaTime;
+
+            if (parryCooldownTimer <= 0f)
+            {
+                parryReady = true;
+                parryCooldownTimer = parryCooldown;
+            }
+        }
+    }
+
 }

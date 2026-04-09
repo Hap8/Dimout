@@ -32,7 +32,7 @@ public abstract class EntityState
             stateMachine.ChangeState(player.dashState);
         }
 
-        if(input.Player.Attack.WasPressedThisFrame())
+        if(!player.isAttacking && input.Player.Attack.WasPressedThisFrame())
         {
             stateMachine.ChangeState(player.attackState);
         }
@@ -40,6 +40,11 @@ public abstract class EntityState
         if(!player.groundDetected && player.wallDetected && player.rb.linearVelocity.y < 0)
         {
             stateMachine.ChangeState(player.wallSlideState);
+        }
+
+        if(!player.isParrying && player.parryReady && !player.isAttacking && input.Player.Parry.WasPressedThisFrame())
+        {
+            stateMachine.ChangeState(player.parryState);
         }
     }
 
