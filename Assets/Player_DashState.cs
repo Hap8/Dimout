@@ -23,6 +23,19 @@ public class Player_DashState : EntityState
 
         stateTimer -= Time.deltaTime;
 
+        if (player.doubleJumpReady && !player.groundDetected && input.Player.Jump.WasPressedThisFrame())
+        {
+            Debug.Log("Double Jumping from Dash State");
+            player.SetVelocity(rb.linearVelocityX / 2, rb.linearVelocityY);
+            stateMachine.ChangeState(player.doubleJumpState);
+        }
+
+        if (player.groundDetected && input.Player.Jump.WasPressedThisFrame())
+        {
+            player.SetVelocity(rb.linearVelocityX / 2, rb.linearVelocityY);
+            stateMachine.ChangeState(player.jumpState);
+        }
+
         if (stateTimer < 0)
         {
             if (player.groundDetected)
@@ -31,6 +44,7 @@ public class Player_DashState : EntityState
             }
             else
             {
+                player.SetVelocity(rb.linearVelocityX / 2, rb.linearVelocityY);
                 stateMachine.ChangeState(player.fallState);
             }
         }

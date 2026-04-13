@@ -10,7 +10,7 @@ public class Player_AiredState : EntityState
     {
         base.Update();
 
-        if (player.doubleJumpReady && input.Player.Jump.WasPressedThisFrame())
+        if (player.doubleJumpReady && !player.isDashing && input.Player.Jump.WasPressedThisFrame())
         {
             stateMachine.ChangeState(player.doubleJumpState);
         }

@@ -387,13 +387,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a33d4d7fbdf572b409cd955ff8633389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  moveSpeed: 5
-  jumpForce: 8
+  moveSpeed: 6
+  jumpForce: 10
   doubleJumpForce: 8
-  inAirMoveMultiplier: 1
+  inAirMoveMultiplier: 0.8
   dashForce: 20
-  dashDuration: 0.5
-  wallSlideSpeedMultiplier: 0.2
+  dashDuration: 0.2
+  wallSlideSpeedMultiplier: 0.1
   doubleJumpReady: 1
   dashReady: 1
   isDashing: 0
@@ -477,11 +477,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_GravityScale: 2
+  m_Material: {fileID: 6200000, guid: 7dbfce662d8e3df49890d7b620ba96bc, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
