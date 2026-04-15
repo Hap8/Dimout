@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Player_AttackState : EntityState
+public class Player_AttackState : PlayerState
 {
     private PlayerAttackRange attackRange;
     private float attackTimer;

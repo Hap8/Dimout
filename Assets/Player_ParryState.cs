@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Player_ParryState : EntityState
+public class Player_ParryState : PlayerState
 {
     private PlayerParryRange parryRange;
     private float parryTimer;

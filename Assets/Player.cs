@@ -1,11 +1,8 @@
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Entity
 {
-    public Rigidbody2D rb { get; private set; }
-
     public PlayerInputSet input;
-    private StateMachine stateMachine;
 
     public Player_IdleState idleState { get; private set; }
     public Player_MoveState moveState { get; private set; }
@@ -16,7 +13,6 @@ public class Player : MonoBehaviour
     public Player_AttackState attackState { get; private set; }
     public Player_ParryState parryState { get; private set; }
     public Player_WallSlideState wallSlideState { get; private set; }
-
 
     [Header("Movement Details")]
     public float moveSpeed;
@@ -33,15 +29,8 @@ public class Player : MonoBehaviour
     public bool isAttacking = false;
     public bool parryReady = true;
     public bool isParrying = false;
-    public int facingDir = 1;
-    public Vector2 movementInput { get; private set; }
 
-    [Header("Collision Details")]
-    [SerializeField] private float groundCheckDistance;
-    [SerializeField] private float wallCheckDistance;
-    [SerializeField] private LayerMask groundLayer;
-    public bool groundDetected { get; private set; }
-    public bool wallDetected { get; private set; }
+    public Vector2 movementInput { get; private set; }
 
     [Header("Attack")]
     public float attackDuration = 0.2f;
@@ -55,14 +44,11 @@ public class Player : MonoBehaviour
     [SerializeField] private PlayerParryRange parryRange;
     public PlayerParryRange ParryRange => parryRange;
 
-
-    private void Awake()
+    protected override void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
+        base.Awake();
 
-        stateMachine = new StateMachine();
         input = new PlayerInputSet();
-
         parryCooldownTimer = parryCooldown;
 
         idleState = new Player_IdleState(this, stateMachine, "idle");
@@ -79,7 +65,6 @@ public class Player : MonoBehaviour
     private void OnEnable()
     {
         input.Enable();
-
         input.Player.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
         input.Player.Movement.canceled += ctx => movementInput = Vector2.zero;
     }
@@ -89,47 +74,17 @@ public class Player : MonoBehaviour
         stateMachine.Initialize(idleState);
     }
 
-    private void Update()
+    protected override void Update()
     {
-        HandleCollisionDetection();
-        stateMachine.UpdateActiveState();
+        base.Update();
         HandleFlip(movementInput.x);
         HandleParryCooldown();
     }
 
-    public void SetVelocity(float xVelocity, float yVelocity)
-    {
-        rb.linearVelocity = new Vector2(xVelocity, yVelocity);
-    }
-
     private void HandleFlip(float xVelocity)
     {
-        if(xVelocity > 0 && facingDir == -1)
-        {
-            Flip();
-        }
-        else if(xVelocity < 0 && facingDir == 1)
-        {
-            Flip();
-        }
-    }
-
-    private void Flip()
-    {
-        facingDir *= -1;
-        transform.Rotate(0.0f, 180.0f, 0.0f);
-    }
-
-    private void HandleCollisionDetection()
-    {
-        groundDetected = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
-        wallDetected = Physics2D.Raycast(transform.position, Vector2.right * facingDir, wallCheckDistance, groundLayer);
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(transform.position, transform.position + new Vector3(0, -groundCheckDistance));
-        Gizmos.DrawLine(transform.position, transform.position + new Vector3(wallCheckDistance * facingDir, 0));
+        if (xVelocity > 0 && facingDir == -1) Flip();
+        else if (xVelocity < 0 && facingDir == 1) Flip();
     }
 
     private void HandleParryCooldown()
@@ -145,5 +100,4 @@ public class Player : MonoBehaviour
             }
         }
     }
-
 }
